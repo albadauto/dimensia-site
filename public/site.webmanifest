@@ -1,0 +1,14 @@
+{
+  "name": "Dimensia · Planejamento facial inteligente",
+  "short_name": "Dimensia",
+  "description": "Planejamento facial 3D para clínicas.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F8F7",
+  "theme_color": "#081512",
+  "icons": [
+    { "src": "/favicon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
