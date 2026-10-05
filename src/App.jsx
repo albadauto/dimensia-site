@@ -320,7 +320,6 @@ function WhatsAppButton() {
       <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
         <path d="M16.05 3.2A12.7 12.7 0 0 0 5.28 22.63L3.6 28.8l6.3-1.65A12.74 12.74 0 1 0 16.05 3.2Zm0 2.15a10.58 10.58 0 1 1-5.4 19.67l-.38-.23-3.73.98 1-3.63-.25-.4a10.56 10.56 0 0 1 8.76-16.39Zm-4.54 4.7c-.2 0-.52.08-.8.38-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.14.2 2.09 3.34 5.17 4.55 2.55 1 3.08.8 3.64.75.56-.05 1.8-.74 2.06-1.45.25-.72.25-1.33.18-1.46-.08-.12-.28-.2-.59-.35-.3-.15-1.8-.9-2.08-.99-.28-.1-.48-.15-.68.15-.2.3-.79.99-.96 1.2-.18.2-.36.23-.66.08-.3-.15-1.28-.47-2.44-1.5-.9-.8-1.51-1.8-1.69-2.1-.18-.3-.02-.46.13-.61.14-.13.3-.35.46-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.07-.15-.67-1.62-.93-2.22-.24-.58-.5-.5-.68-.51h-.58Z" />
       </svg>
-      <span>Fale pelo WhatsApp</span>
     </a>
   );
 }
@@ -457,8 +456,8 @@ function Home() {
           ))}
         </div>
       </section>
-      <section className="overflow-hidden border-y border-slate-200 bg-white">
-        <div className="section grid items-center gap-14 lg:grid-cols-[.82fr_1.18fr]">
+      <section className="workflow-section overflow-hidden border-y border-mint-100">
+        <div className="section relative z-10 grid items-center gap-14 lg:grid-cols-[.82fr_1.18fr]">
           <div className="max-w-lg">
             <p className="eyebrow">Fluxo conectado</p>
             <h2 className="section-title">

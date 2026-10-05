@@ -31,13 +31,16 @@
 .dark-section{background:radial-gradient(ellipse at 75% 18%,#123e32 0%,#0b201a 40%,#081512 74%),#081512;}
 .blog-cover{@apply grid h-48 place-items-center text-mint-300;background:radial-gradient(circle at 60% 30%,#175143,#0b211b 60%,#081512);}
 .workflow-list{@apply relative space-y-4;counter-reset:workflow;}
+.workflow-section{position:relative;background:linear-gradient(135deg,#f2fbf7 0%,#e9f7f1 48%,#f7fbf9 100%);}
+.workflow-section::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(13,168,117,.11) 1px,transparent 0);background-size:28px 28px;mask-image:linear-gradient(90deg,transparent,rgba(0,0,0,.55),transparent);}
+.workflow-section::after{content:"";position:absolute;width:420px;height:420px;right:-120px;top:-180px;border-radius:999px;background:rgba(59,213,167,.14);filter:blur(24px);}
 .workflow-list::before{content:"";position:absolute;left:29px;top:64px;bottom:64px;width:1px;background:linear-gradient(#72e4c2,#d3f8eb);}
 .workflow-card{@apply relative grid grid-cols-[60px_48px_1fr] items-center gap-4 rounded-3xl border border-slate-200 bg-slate-50/60 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-mint-300 hover:bg-white hover:shadow-lg;}
 .workflow-number{@apply relative z-10 grid h-12 w-12 place-items-center rounded-2xl bg-mint-100 text-xs font-bold tracking-wider text-mint-700 ring-4 ring-white;}
 .workflow-icon{@apply grid h-11 w-11 place-items-center rounded-xl bg-slate-900 text-mint-400;}
-.whatsapp-button{@apply fixed bottom-5 right-5 z-[60] inline-flex min-h-14 items-center gap-3 rounded-full bg-[#25d366] px-5 font-semibold text-white shadow-[0_12px_35px_rgba(8,21,18,.28)] transition hover:-translate-y-1 hover:bg-[#20bd5a] hover:shadow-[0_16px_40px_rgba(8,21,18,.34)];}
+.whatsapp-button{@apply fixed bottom-5 right-5 z-[60] inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366] p-0 text-white shadow-[0_12px_35px_rgba(8,21,18,.28)] transition hover:-translate-y-1 hover:bg-[#20bd5a] hover:shadow-[0_16px_40px_rgba(8,21,18,.34)];}
 .whatsapp-button svg{@apply h-7 w-7 shrink-0;}
-@media(max-width:639px){.workflow-list::before{left:25px}.workflow-card{grid-template-columns:52px 1fr;padding:16px}.workflow-icon{display:none}.workflow-number{height:44px;width:44px}.whatsapp-button{bottom:18px;right:18px;height:56px;width:56px;padding:0;justify-content:center}.whatsapp-button span{display:none}}
+@media(max-width:639px){.workflow-list::before{left:25px}.workflow-card{grid-template-columns:52px 1fr;padding:16px}.workflow-icon{display:none}.workflow-number{height:44px;width:44px}.whatsapp-button{bottom:18px;right:18px}}
 .viewer-background{background:radial-gradient(ellipse at 50% 42%,#183d33 0%,#0d211b 52%,#081512 100%);}
 .viewer-grid{background-image:linear-gradient(#63f5c51a 1px,transparent 1px),linear-gradient(90deg,#63f5c51a 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(ellipse,#000 0%,transparent 75%);}
 .empty-face{width:130px;height:155px;filter:drop-shadow(0 0 16px #63f5c533);}
