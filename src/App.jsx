@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Icon, Logo } from "./ui";
+import { NeuralField, FaceScan, Scramble, Terminal, useGlobalFx } from "./fx";
 
 const APP = (
   import.meta.env.VITE_APP_URL || "https://app.dimensia.com.br"
@@ -192,29 +193,39 @@ function Seo({ title, description, path = "/", type = "website" }) {
   }, [title, description, path, type]);
   return null;
 }
+
+const NAV = [
+  ["/produto", "Produto"],
+  ["/como-funciona", "Como funciona"],
+  ["/seguranca", "Segurança"],
+  ["/planos", "Planos"],
+  ["/blog", "Blog"],
+];
+
 function Header() {
-  const [o, setO] = useState(false),
-    nav = [
-      ["/produto", "Produto"],
-      ["/como-funciona", "Como funciona"],
-      ["/seguranca", "Segurança"],
-      ["/planos", "Planos"],
-      ["/blog", "Blog"],
-    ];
+  const [o, setO] = useState(false);
+  const here = location.pathname.replace(/\/$/, "") || "/";
   return (
     <header className="site-header">
-      <div className="mx-auto flex h-[74px] max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/">
-          <Logo className="h-9 sm:h-10" />
+      <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-5 sm:px-8">
+        <Link href="/" aria-label="Dimensia — início">
+          <Logo variant="light" className="h-9 sm:h-10" />
         </Link>
         <nav className="hidden items-center lg:flex">
-          {nav.map(([h, l]) => (
-            <Link key={h} href={h} className="nav-link">
+          {NAV.map(([h, l]) => (
+            <Link
+              key={h}
+              href={h}
+              className={`nav-link ${here.startsWith(h) ? "active" : ""}`}
+            >
               {l}
             </Link>
           ))}
         </nav>
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          <span className="mono mr-2 hidden items-center gap-2 text-[10px] uppercase tracking-[.18em] text-slate-500 xl:inline-flex">
+            <span className="status-dot" /> IA online
+          </span>
           <a href={APP + "/entrar"} className="nav-link">
             Entrar
           </a>
@@ -223,28 +234,30 @@ function Header() {
           </a>
         </div>
         <button
-          className="grid h-11 w-11 place-items-center rounded-xl border border-slate-200 lg:hidden"
+          className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-white lg:hidden"
           onClick={() => setO(!o)}
+          aria-label={o ? "Fechar menu" : "Abrir menu"}
         >
           <Icon name={o ? "x" : "menu"} />
         </button>
       </div>
       {o && (
-        <div className="border-t bg-white px-5 pb-5 lg:hidden">
+        <div className="border-t border-white/10 bg-void/95 px-5 pb-5 backdrop-blur-xl lg:hidden">
           <nav className="flex flex-col py-3">
-            {nav.map(([h, l]) => (
+            {NAV.map(([h, l], i) => (
               <Link
                 key={h}
                 href={h}
                 onClick={() => setO(false)}
-                className="rounded-lg px-3 py-3 text-sm font-medium"
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-200"
               >
+                <span className="mono text-[10px] text-cyan-400">0{i + 1}</span>
                 {l}
               </Link>
             ))}
           </nav>
           <div className="grid grid-cols-2 gap-2">
-            <a href={APP + "/entrar"} className="btn-secondary">
+            <a href={APP + "/entrar"} className="btn-ghost">
               Entrar
             </a>
             <a href={APP + "/cadastro"} className="btn-primary">
@@ -260,9 +273,9 @@ function Footer() {
   const group = (t, a) => (
     <div>
       <p className="footer-title">{t}</p>
-      <nav className="mt-4 flex flex-col items-start gap-3">
+      <nav className="mt-5 flex flex-col items-start gap-3">
         {a.map(([h, l]) => (
-          <Link key={h} href={h} className="hover:text-white">
+          <Link key={h} href={h} className="transition hover:text-cyan-300">
             {l}
           </Link>
         ))}
@@ -270,13 +283,16 @@ function Footer() {
     </div>
   );
   return (
-    <footer className="bg-slate-950 px-5 py-14 text-sm text-slate-400 sm:px-8">
+    <footer className="overflow-hidden border-t border-white/[.06] bg-void/80 px-5 pt-16 text-sm text-slate-400 backdrop-blur sm:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <Logo variant="light" className="h-9" />
           <p className="mt-5 max-w-sm leading-6">
             Planejamento facial inteligente em 3D para clínicas que valorizam
             organização, clareza e apresentação profissional.
+          </p>
+          <p className="mono mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[.18em] text-slate-500">
+            <span className="status-dot" /> Todos os sistemas operacionais
           </p>
         </div>
         {group("Produto", [
@@ -292,15 +308,22 @@ function Footer() {
         ])}
         <div>
           <p className="footer-title">Acesso</p>
-          <div className="mt-4 flex flex-col items-start gap-3">
-            <a href={APP + "/entrar"}>Entrar no sistema</a>
-            <a href={APP + "/cadastro"}>Criar conta grátis</a>
+          <div className="mt-5 flex flex-col items-start gap-3">
+            <a href={APP + "/entrar"} className="transition hover:text-cyan-300">
+              Entrar no sistema
+            </a>
+            <a href={APP + "/cadastro"} className="transition hover:text-cyan-300">
+              Criar conta grátis
+            </a>
           </div>
         </div>
       </div>
-      <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-3 border-t border-white/10 pt-7 text-xs sm:flex-row sm:justify-between">
-        <span>© {new Date().getFullYear()} Dimensia.</span>
+      <div className="mx-auto mt-14 flex max-w-7xl flex-col gap-3 border-t border-white/[.06] pt-7 text-xs sm:flex-row sm:justify-between">
+        <span className="mono">© {new Date().getFullYear()} Dimensia.</span>
         <span>Ferramenta de apoio — não substitui avaliação profissional.</span>
+      </div>
+      <div className="footer-word mt-6" aria-hidden="true">
+        DIMENSIA
       </div>
     </footer>
   );
@@ -324,83 +347,124 @@ function WhatsAppButton() {
   );
 }
 
-const Layout = ({ children }) => (
-  <div className="min-h-screen bg-[#f6f9f8]">
-    <Header />
-    <main>{children}</main>
-    <Footer />
-    <WhatsAppButton />
-  </div>
-);
-function Hero({ eyebrow, title, text, children }) {
+function Layout({ children }) {
+  useGlobalFx(location.pathname);
   return (
-    <section className="dark-section relative overflow-hidden">
+    <div className="app-shell">
+      <NeuralField />
+      <div id="cursor-glow" aria-hidden="true" />
+      <div className="noise" aria-hidden="true" />
+      <Header />
+      <main>{children}</main>
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  );
+}
+
+function Hero({ eyebrow, title, text, code, children }) {
+  return (
+    <section className="relative overflow-hidden border-b border-white/[.05]">
       <div className="hero-grid absolute inset-0" />
-      <div className="relative mx-auto max-w-7xl px-5 py-20 text-white sm:px-8 sm:py-24">
-        <p className="eyebrow text-mint-300">{eyebrow}</p>
-        <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl">
-          {title}
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-          {text}
+      <div className="orb orb-a" />
+      <div className="orb orb-b" />
+      <div className="relative mx-auto max-w-7xl px-5 pb-20 pt-20 text-white sm:px-8 sm:pb-24 sm:pt-28">
+        <p className="mono mb-6 text-[10px] uppercase tracking-[.25em] text-slate-500">
+          sys://dimensia/{code || eyebrow.toLowerCase().replace(/\s+/g, "-")}
         </p>
+        <p className="eyebrow">{eyebrow}</p>
+        <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.05] tracking-[-.03em] sm:text-6xl">
+          <span className="text-chrome">
+            <Scramble text={title} />
+          </span>
+        </h1>
+        <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-400">{text}</p>
         {children}
       </div>
     </section>
   );
 }
+
 const Cta = () => (
-  <section className="bg-mint-500 px-5 py-16 text-center">
-    <p className="eyebrow text-mint-900">Comece agora</p>
-    <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">
-      Dê uma nova dimensão ao seu planejamento.
-    </h2>
-    <p className="mx-auto mt-4 max-w-xl text-mint-900">
-      Conheça todos os recursos por 14 dias, sem cartão.
-    </p>
-    <a
-      href={APP + "/cadastro"}
-      className="mt-8 inline-flex min-h-12 items-center gap-2 rounded-xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white"
+  <section className="px-5 py-24 sm:px-8">
+    <div
+      data-reveal
+      className="conic relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] bg-[#04120e] px-6 py-20 text-center"
     >
-      Começar teste grátis <Icon name="arrow" />
-    </a>
+      <div className="hero-grid absolute inset-0 opacity-70" />
+      <div className="absolute left-1/2 top-1/2 h-[420px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-mint-500/20 blur-[90px]" />
+      <div className="relative">
+        <p className="eyebrow">Comece agora</p>
+        <h2 className="mx-auto mt-5 max-w-3xl text-4xl font-semibold tracking-[-.03em] text-white sm:text-6xl">
+          Dê uma <span className="text-gradient">nova dimensão</span> ao seu
+          planejamento.
+        </h2>
+        <p className="mx-auto mt-5 max-w-xl text-slate-400">
+          Conheça todos os recursos por 14 dias, sem cartão.
+        </p>
+        <div className="mt-10 flex flex-wrap justify-center gap-4">
+          <a href={APP + "/cadastro"} className="btn-primary px-7! py-4! text-sm!">
+            Começar teste grátis <Icon name="arrow" />
+          </a>
+          <Link href="/contato" className="btn-ghost px-7! py-4! text-sm!">
+            Falar com a equipe
+          </Link>
+        </div>
+      </div>
+    </div>
   </section>
 );
-const Card = ({ icon, title, text }) => (
-  <article className="content-card">
+
+const Card = ({ icon, title, text, index, reveal }) => (
+  <article className="content-card spot h-full" data-reveal={reveal}>
+    {index && <span className="card-index">{index}</span>}
     <div className="icon-box">
       <Icon name={icon} className="h-5 w-5" />
     </div>
-    <h3 className="mt-5 font-semibold text-slate-900">{title}</h3>
-    <p className="mt-2 text-sm leading-6 text-slate-500">{text}</p>
+    <h3 className="mt-6 text-lg font-semibold">{title}</h3>
+    <p className="mt-2 text-sm leading-6 text-slate-400">{text}</p>
   </article>
 );
-function Face() {
+
+function Scanner() {
   return (
-    <div className="hero-face relative mx-auto aspect-[4/5] w-full max-w-md rounded-[2rem] border border-white/10 bg-white/[.035] p-9">
-      <svg viewBox="0 0 140 170" fill="none" className="h-full w-full">
-        <path d="M70 10C20 10 15 47 23 88C28 125 46 153 70 162C94 153 112 125 117 88C125 47 120 10 70 10Z" />
-        <path d="M23 65L70 36L117 65L70 88Z M23 88L70 110L117 88 M40 132L70 110L100 132 M70 10V162 M28 42L45 65L35 100L70 145L105 100L95 65L112 42" />
-      </svg>
-      {[
-        [38, 31],
-        [62, 31],
-        [50, 52],
-        [35, 66],
-        [65, 66],
-        [50, 81],
-      ].map(([x, y], i) => (
-        <span
-          key={i}
-          className="hero-dot absolute grid h-8 w-8 place-items-center rounded-full bg-mint-400 text-xs font-bold text-slate-950 ring-2 ring-white"
-          style={{ left: x + "%", top: y + "%" }}
-        >
-          {i + 1}
-        </span>
-      ))}
+    <div className="scanner" data-reveal="2">
+      <div className="scanlines absolute inset-0 rounded-[2rem]" />
+      <div className="hud-ring" />
+      <div className="hud-ring r2" />
+      <FaceScan />
+      <span className="hud-corner tl" />
+      <span className="hud-corner tr" />
+      <span className="hud-corner bl" />
+      <span className="hud-corner br" />
+      <span className="hud-chip left-6 top-6 flex items-center gap-2">
+        <span className="status-dot" /> Escaneando
+      </span>
+      <span className="hud-chip right-6 top-6">Mesh 3D · ativo</span>
+      <div className="hud-chip bottom-6 left-6 right-6 py-3!">
+        <div className="mb-2 flex justify-between">
+          <span>Reconstrução facial</span>
+          <span className="text-mint-300">8 marcos</span>
+        </div>
+        <div className="hud-bar">
+          <i />
+        </div>
+      </div>
     </div>
   );
 }
+
+const TICKER = [
+  "Visão computacional",
+  "Reconstrução 3D",
+  "Referências faciais",
+  "Captura guiada",
+  "Mapeamento de aplicações",
+  "Relatórios inteligentes",
+  "Histórico do paciente",
+  "LGPD by design",
+];
+
 function Home() {
   return (
     <Layout>
@@ -408,88 +472,148 @@ function Home() {
         title="Dimensia"
         description="Planejamento facial 3D, captura guiada e relatórios profissionais para clínicas."
       />
-      <section className="dark-section relative overflow-hidden text-white">
+      <section className="relative overflow-hidden">
         <div className="hero-grid absolute inset-0" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
-          <div>
-            <span className="pill-dark">
-              <Icon name="sparkles" /> Tecnologia para harmonização facial
+        <div className="hero-floor" />
+        <div className="orb orb-a" />
+        <div className="orb orb-b" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 pb-24 pt-16 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:pb-32 lg:pt-24">
+          <div className="text-white">
+            <span className="pill-dark" data-reveal>
+              <Icon name="sparkles" /> Inteligência artificial · Harmonização facial
             </span>
-            <h1 className="mt-7 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
-              Planeje com clareza.
-              <br />
-              <span className="text-mint-400">Apresente com confiança.</span>
+            <h1 className="hero-title mt-8">
+              <span className="text-chrome block">
+                <Scramble text="Planeje com clareza." />
+              </span>
+              <span
+                className="glitch text-gradient block"
+                data-text="Apresente com confiança."
+              >
+                <Scramble text="Apresente com confiança." delay={500} />
+              </span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-              Transforme registros faciais em visualizações 3D, organize pontos
-              de aplicação e entregue relatórios profissionais.
+            <p className="mt-7 max-w-xl text-lg leading-8 text-slate-400" data-reveal="2">
+              Transforme registros faciais em visualizações 3D com apoio de IA,
+              organize pontos de aplicação e entregue relatórios profissionais.
             </p>
-            <div className="mt-9 flex flex-wrap gap-5">
-              <a href={APP + "/cadastro"} className="btn-primary px-6! py-3.5!">
+            <div className="mt-10 flex flex-wrap items-center gap-4" data-reveal="3">
+              <a href={APP + "/cadastro"} className="btn-primary px-7! py-4! text-sm!">
                 Testar grátis <Icon name="arrow" />
               </a>
-              <Link
-                href="/como-funciona"
-                className="py-3 text-sm font-semibold"
-              >
-                Ver como funciona →
+              <Link href="/como-funciona" className="btn-ghost px-7! py-4! text-sm!">
+                <Icon name="cube" /> Ver como funciona
               </Link>
             </div>
+            <div className="mono mt-12 flex flex-wrap gap-x-8 gap-y-3 text-[11px] uppercase tracking-[.18em] text-slate-500" data-reveal="4">
+              <span className="flex items-center gap-2">
+                <Icon name="check" className="h-3.5 w-3.5 text-mint-400" /> 14 dias grátis
+              </span>
+              <span className="flex items-center gap-2">
+                <Icon name="check" className="h-3.5 w-3.5 text-mint-400" /> Sem cartão
+              </span>
+              <span className="flex items-center gap-2">
+                <Icon name="check" className="h-3.5 w-3.5 text-mint-400" /> 100% na nuvem
+              </span>
+            </div>
           </div>
-          <Face />
+          <Scanner />
         </div>
       </section>
+
+      <div className="marquee" aria-hidden="true">
+        <div className="marquee-track">
+          {[...TICKER, ...TICKER].map((t, i) => (
+            <span key={i} className="marquee-item">
+              <b>◆</b> {t}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <section className="mx-auto max-w-7xl px-5 pt-20 sm:px-8">
+        <div className="glass grid grid-cols-2 divide-white/[.06] lg:grid-cols-4 lg:divide-x" data-reveal>
+          {[
+            ["3D", "Visualização navegável"],
+            ["IA", "Validação da captura"],
+            ["14", "Dias de teste grátis"],
+            ["0", "Instalação · 100% web"],
+          ].map(([n, l]) => (
+            <div key={l} className="stat">
+              <strong className="text-gradient">{n}</strong>
+              <span>{l}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="section">
-        <div className="section-heading">
+        <div className="section-heading" data-reveal>
           <div>
             <p className="eyebrow">Plataforma completa</p>
-            <h2>Do primeiro registro ao relatório final.</h2>
+            <h2>
+              Do primeiro registro <span className="text-gradient">ao relatório final.</span>
+            </h2>
           </div>
           <p>
             Menos informações espalhadas e mais consistência na rotina da
             clínica.
           </p>
         </div>
-        <div className="card-grid mt-12">
-          {features.map(([i, t, d]) => (
-            <Card key={t} icon={i} title={t} text={d} />
+        <div className="card-grid mt-14">
+          {features.map(([i, t, d], k) => (
+            <Card
+              key={t}
+              icon={i}
+              title={t}
+              text={d}
+              index={`0${k + 1}`}
+              reveal={String((k % 3) + 1)}
+            />
           ))}
         </div>
       </section>
-      <section className="workflow-section overflow-hidden border-y border-mint-100">
-        <div className="section relative z-10 grid items-center gap-14 lg:grid-cols-[.82fr_1.18fr]">
-          <div className="max-w-lg">
-            <p className="eyebrow">Fluxo conectado</p>
+
+      <section className="relative overflow-hidden border-y border-white/[.05]">
+        <div className="orb orb-b" />
+        <div className="section relative z-10 grid items-center gap-14 lg:grid-cols-2">
+          <div data-reveal>
+            <p className="eyebrow">Motor de IA</p>
             <h2 className="section-title">
-              Um caminho mais simples para um planejamento completo.
+              Da foto ao modelo 3D <span className="text-gradient">em um fluxo.</span>
             </h2>
             <p className="section-copy">
-              Cada etapa se conecta à próxima. Você mantém o foco no paciente
-              enquanto o Dimensia organiza os detalhes do atendimento.
+              A inteligência artificial valida a qualidade da captura, identifica
+              referências faciais e reconstrói a superfície — você só revisa e
+              planeja.
             </p>
-            <Link href="/como-funciona" className="btn-secondary mt-7">
+            <div className="mt-10">
+              <Terminal />
+            </div>
+          </div>
+          <div data-reveal="2">
+            <ol className="workflow-list">
+              {[
+                ["01", "users", "Cadastre e fotografe", "Organize os dados do paciente e faça a captura guiada pelo celular ou tablet."],
+                ["02", "cube", "Explore e planeje", "Revise a visualização 3D e registre cada ponto com produto, região e quantidade."],
+                ["03", "file", "Documente e acompanhe", "Gere um relatório profissional e mantenha todo o histórico centralizado."],
+              ].map(([n, icon, title, text]) => (
+                <li key={n} className="workflow-card spot">
+                  <span className="workflow-number">{n}</span>
+                  <span className="workflow-icon">
+                    <Icon name={icon} className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0">
+                    <strong className="font-display block text-base text-white">{title}</strong>
+                    <span className="mt-1.5 block text-sm leading-6 text-slate-400">{text}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <Link href="/como-funciona" className="btn-ghost mt-8">
               Ver o passo a passo <Icon name="arrow" />
             </Link>
           </div>
-          <ol className="workflow-list">
-            {[
-              ["01", "users", "Cadastre e fotografe", "Organize os dados do paciente e faça a captura guiada pelo celular ou tablet."],
-              ["02", "cube", "Explore e planeje", "Revise a visualização 3D e registre cada ponto com produto, região e quantidade."],
-              ["03", "file", "Documente e acompanhe", "Gere um relatório profissional e mantenha todo o histórico centralizado."],
-            ].map(([n, icon, title, text]) => (
-              <li
-                key={n}
-                className="workflow-card"
-              >
-                <span className="workflow-number">{n}</span>
-                <span className="workflow-icon"><Icon name={icon} className="h-5 w-5" /></span>
-                <span className="min-w-0">
-                  <strong className="block text-base text-slate-900">{title}</strong>
-                  <span className="mt-1.5 block text-sm leading-6 text-slate-500">{text}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
         </div>
       </section>
       <BlogPreview />
@@ -497,6 +621,7 @@ function Home() {
     </Layout>
   );
 }
+
 function Product() {
   return (
     <Layout>
@@ -512,32 +637,26 @@ function Product() {
       />
       <section className="section">
         <div className="card-grid">
-          {features.map(([i, t, d]) => (
-            <Card key={t} icon={i} title={t} text={d} />
+          {features.map(([i, t, d], k) => (
+            <Card key={t} icon={i} title={t} text={d} index={`0${k + 1}`} reveal={String((k % 3) + 1)} />
           ))}
         </div>
-        <div className="mt-16 grid gap-6 lg:grid-cols-2">
+        <div className="mt-20 grid gap-6 lg:grid-cols-2">
           {[
-            [
-              "Captura e qualidade",
-              "A câmera orienta posição, enquadramento e estabilidade. A revisão acontece antes de salvar.",
-            ],
-            [
-              "Reconstrução e visualização",
-              "A superfície 3D oferece volume, relevo e textura para explorar o registro.",
-            ],
-            [
-              "Pontos e produtos",
-              "Cada marcação carrega região, produto, quantidade, lote, validade e observações.",
-            ],
-            [
-              "Relatório e histórico",
-              "O PDF organiza os pontos e tudo permanece associado ao paciente.",
-            ],
-          ].map(([t, d]) => (
-            <div key={t} className="rounded-3xl bg-white p-7">
-              <h2 className="text-xl font-semibold">{t}</h2>
-              <p className="mt-3 leading-7 text-slate-500">{d}</p>
+            ["camera", "Captura e qualidade", "A câmera orienta posição, enquadramento e estabilidade. A revisão acontece antes de salvar."],
+            ["cube", "Reconstrução e visualização", "A superfície 3D oferece volume, relevo e textura para explorar o registro."],
+            ["target", "Pontos e produtos", "Cada marcação carrega região, produto, quantidade, lote, validade e observações."],
+            ["file", "Relatório e histórico", "O PDF organiza os pontos e tudo permanece associado ao paciente."],
+          ].map(([ic, t, d], k) => (
+            <div key={t} className="glass spot flex gap-6 p-8" data-reveal={String((k % 2) + 1)}>
+              <span className="mono text-sm text-cyan-400">/0{k + 1}</span>
+              <div>
+                <div className="flex items-center gap-3">
+                  <Icon name={ic} className="h-5 w-5 text-mint-300" />
+                  <h2 className="text-xl font-semibold text-white">{t}</h2>
+                </div>
+                <p className="mt-3 leading-7 text-slate-400">{d}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -546,34 +665,15 @@ function Product() {
     </Layout>
   );
 }
+
 function How() {
   const a = [
-    ["users", "1. Organize o paciente", "Centralize dados e histórico."],
-    [
-      "camera",
-      "2. Faça a captura guiada",
-      "Siga instruções de alinhamento e estabilidade.",
-    ],
-    [
-      "sparkles",
-      "3. Processe as imagens",
-      "A qualidade é avaliada antes da reconstrução.",
-    ],
-    [
-      "cube",
-      "4. Explore o modelo 3D",
-      "Gire, aproxime e alterne a visualização.",
-    ],
-    [
-      "target",
-      "5. Registre o planejamento",
-      "Informe região, produto, quantidade e observações.",
-    ],
-    [
-      "file",
-      "6. Gere o relatório",
-      "Crie um PDF claro para documentação e comunicação.",
-    ],
+    ["users", "Organize o paciente", "Centralize dados e histórico."],
+    ["camera", "Faça a captura guiada", "Siga instruções de alinhamento e estabilidade."],
+    ["sparkles", "Processe as imagens", "A qualidade é avaliada antes da reconstrução."],
+    ["cube", "Explore o modelo 3D", "Gire, aproxime e alterne a visualização."],
+    ["target", "Registre o planejamento", "Informe região, produto, quantidade e observações."],
+    ["file", "Gere o relatório", "Crie um PDF claro para documentação e comunicação."],
   ];
   return (
     <Layout>
@@ -588,25 +688,34 @@ function How() {
         text="O fluxo reduz tarefas manuais e mantém o profissional no controle."
       />
       <section className="section">
-        <ol className="grid gap-5 lg:grid-cols-2">
-          {a.map(([i, t, d]) => (
-            <li key={t}>
-              <Card icon={i} title={t} text={d} />
-            </li>
-          ))}
-        </ol>
-        <div className="mt-12 rounded-3xl border border-amber-200 bg-amber-50 p-7">
-          <b>Tecnologia de apoio, decisão profissional</b>
-          <p className="mt-2 text-sm leading-6 text-amber-900/75">
-            O Dimensia não realiza diagnóstico, não prescreve procedimentos e
-            não substitui avaliação presencial ou responsabilidade profissional.
-          </p>
+        <div className="grid items-start gap-12 lg:grid-cols-[1.1fr_.9fr]">
+          <ol className="grid gap-5 sm:grid-cols-2">
+            {a.map(([i, t, d], k) => (
+              <li key={t}>
+                <Card icon={i} title={t} text={d} index={`ETAPA 0${k + 1}`} reveal={String((k % 2) + 1)} />
+              </li>
+            ))}
+          </ol>
+          <div className="lg:sticky lg:top-28" data-reveal="2">
+            <Terminal />
+          </div>
+        </div>
+        <div className="mt-14 flex gap-5 rounded-3xl border border-amber-400/25 bg-amber-400/[.05] p-7 backdrop-blur" data-reveal>
+          <Icon name="info" className="mt-0.5 h-6 w-6 shrink-0 text-amber-300" />
+          <div>
+            <b className="font-display text-amber-100">Tecnologia de apoio, decisão profissional</b>
+            <p className="mt-2 text-sm leading-6 text-amber-100/60">
+              O Dimensia não realiza diagnóstico, não prescreve procedimentos e
+              não substitui avaliação presencial ou responsabilidade profissional.
+            </p>
+          </div>
         </div>
       </section>
       <Cta />
     </Layout>
   );
 }
+
 function Security() {
   return (
     <Layout>
@@ -617,70 +726,44 @@ function Security() {
       />
       <Hero
         eyebrow="Segurança e privacidade"
+        code="seguranca"
         title="Confiança também é parte do planejamento."
         text="Proteção de dados orienta a forma como acessos, pacientes, imagens e documentos são organizados."
       />
       <section className="section">
         <div className="card-grid">
           {[
-            [
-              "lock",
-              "Acesso individual",
-              "Credenciais próprias para cada membro.",
-            ],
-            [
-              "home",
-              "Isolamento por clínica",
-              "Dados separados entre organizações.",
-            ],
-            [
-              "shield",
-              "Proteção de dados",
-              "Camadas de proteção no armazenamento e comunicação.",
-            ],
-            [
-              "users",
-              "Permissões de equipe",
-              "Controle sobre quem participa da operação.",
-            ],
-            [
-              "archive",
-              "Histórico centralizado",
-              "Menos cópias espalhadas em dispositivos pessoais.",
-            ],
-            [
-              "check",
-              "Consentimento consciente",
-              "Autorizações adequadas à finalidade de uso.",
-            ],
-          ].map(([i, t, d]) => (
-            <Card key={t} icon={i} title={t} text={d} />
+            ["lock", "Acesso individual", "Credenciais próprias para cada membro."],
+            ["home", "Isolamento por clínica", "Dados separados entre organizações."],
+            ["shield", "Proteção de dados", "Camadas de proteção no armazenamento e comunicação."],
+            ["users", "Permissões de equipe", "Controle sobre quem participa da operação."],
+            ["archive", "Histórico centralizado", "Menos cópias espalhadas em dispositivos pessoais."],
+            ["check", "Consentimento consciente", "Autorizações adequadas à finalidade de uso."],
+          ].map(([i, t, d], k) => (
+            <Card key={t} icon={i} title={t} text={d} index={`0${k + 1}`} reveal={String((k % 3) + 1)} />
           ))}
         </div>
-        <div className="mt-14 grid gap-8 lg:grid-cols-2">
+        <div className="glass mt-16 grid gap-10 p-8 sm:p-12 lg:grid-cols-2" data-reveal>
           <div>
             <p className="eyebrow">Responsabilidade compartilhada</p>
             <h2 className="section-title">
-              A rotina da clínica completa o cuidado.
+              A rotina da clínica <span className="text-gradient">completa o cuidado.</span>
             </h2>
           </div>
-          <div className="space-y-5 text-slate-500">
-            <p>
-              <b className="text-slate-900">Finalidade clara.</b> Explique como
-              fotografias e dados serão usados.
-            </p>
-            <p>
-              <b className="text-slate-900">Acessos individuais.</b> Não
-              compartilhe senhas e revise permissões.
-            </p>
-            <p>
-              <b className="text-slate-900">Políticas internas.</b> Treine a
-              equipe e defina retenção e descarte.
-            </p>
-            <p>
-              <b className="text-slate-900">Orientação especializada.</b> Adeque
-              documentos à realidade da clínica.
-            </p>
+          <div className="space-y-5 text-slate-400">
+            {[
+              ["Finalidade clara.", "Explique como fotografias e dados serão usados."],
+              ["Acessos individuais.", "Não compartilhe senhas e revise permissões."],
+              ["Políticas internas.", "Treine a equipe e defina retenção e descarte."],
+              ["Orientação especializada.", "Adeque documentos à realidade da clínica."],
+            ].map(([b, t]) => (
+              <p key={b} className="flex gap-3">
+                <Icon name="check" className="mt-1 h-4 w-4 shrink-0 text-mint-400" />
+                <span>
+                  <b className="text-white">{b}</b> {t}
+                </span>
+              </p>
+            ))}
           </div>
         </div>
       </section>
@@ -688,6 +771,7 @@ function Security() {
     </Layout>
   );
 }
+
 function Pricing() {
   return (
     <Layout>
@@ -702,60 +786,72 @@ function Pricing() {
         text="Um plano transparente por clínica com os recursos essenciais para organizar o planejamento facial."
       />
       <section className="section">
-        <div className="mx-auto max-w-xl rounded-[2rem] border border-mint-300 bg-white p-8 shadow-xl">
-          <span className="pill-light">14 dias grátis</span>
-          <h2 className="mt-5 text-xl font-semibold">Dimensia completo</h2>
-          <div className="mt-3">
-            <b className="text-5xl">R$ 149</b>
-            <span className="text-slate-500"> / mês</span>
+        <div className="relative mx-auto max-w-xl" data-reveal>
+          <div className="absolute inset-x-10 -inset-y-6 rounded-full bg-mint-500/20 blur-[80px]" />
+          <div className="conic relative rounded-[2rem] bg-[#04120e]/95 p-8 sm:p-10">
+            <div className="flex items-center justify-between">
+              <span className="pill-light">14 dias grátis</span>
+              <span className="mono text-[10px] uppercase tracking-[.2em] text-slate-500">plano/único</span>
+            </div>
+            <h2 className="mt-6 text-xl font-semibold text-white">Dimensia completo</h2>
+            <div className="mt-4 flex items-end gap-2">
+              <b className="font-display text-6xl tracking-tight text-gradient">R$ 149</b>
+              <span className="mb-2 text-slate-500">/ mês</span>
+            </div>
+            <p className="mt-2 text-sm text-slate-400">
+              Uma assinatura por clínica. Sem fidelidade.
+            </p>
+            <ul className="mt-8 space-y-3.5 border-t border-white/[.07] pt-8">
+              {[
+                "Pacientes e planejamentos ilimitados",
+                "Captura guiada e visualização 3D",
+                "Equipe com múltiplos profissionais",
+                "Relatórios PDF ilimitados",
+                "Catálogo de produtos",
+                "Histórico e suporte",
+              ].map((x) => (
+                <li key={x} className="flex items-start gap-3 text-sm text-slate-200">
+                  <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md border border-mint-400/40 bg-mint-400/10">
+                    <Icon name="check" className="h-3.5 w-3.5 text-mint-300" />
+                  </span>
+                  {x}
+                </li>
+              ))}
+            </ul>
+            <a href={APP + "/cadastro"} className="btn-primary mt-9 w-full py-4! text-sm!">
+              Começar teste grátis <Icon name="arrow" />
+            </a>
           </div>
-          <p className="mt-2 text-sm text-slate-500">
-            Uma assinatura por clínica. Sem fidelidade.
-          </p>
-          <ul className="mt-7 space-y-3">
-            {[
-              "Pacientes e planejamentos ilimitados",
-              "Captura guiada e visualização 3D",
-              "Equipe com múltiplos profissionais",
-              "Relatórios PDF ilimitados",
-              "Catálogo de produtos",
-              "Histórico e suporte",
-            ].map((x) => (
-              <li key={x} className="flex items-start gap-3 text-sm">
-                <Icon
-                  name="check"
-                  className="mt-0.5 h-5 w-5 shrink-0 text-mint-600"
-                />
-                {x}
-              </li>
-            ))}
-          </ul>
-          <a href={APP + "/cadastro"} className="btn-primary mt-8 w-full py-3!">
-            Começar teste grátis
-          </a>
         </div>
       </section>
       <Cta />
     </Layout>
   );
 }
-function PostCard({ p }) {
+
+function PostCard({ p, reveal }) {
   return (
-    <article className="group overflow-hidden rounded-3xl border bg-white">
+    <article
+      className="group spot h-full overflow-hidden rounded-3xl border border-white/[.07] bg-white/[.02] backdrop-blur transition hover:-translate-y-1"
+      data-reveal={reveal}
+    >
       <div className="blog-cover">
-        <Icon name={p.icon} className="h-10 w-10" />
+        <Icon name={p.icon} className="h-12 w-12" strokeWidth={1.3} />
+        <span className="mono absolute bottom-3 left-4 text-[10px] uppercase tracking-[.2em] text-cyan-300/70">
+          {p.category}
+        </span>
       </div>
       <div className="p-6">
-        <p className="eyebrow">
-          {p.category} · {p.read}
+        <p className="mono text-[10px] uppercase tracking-[.18em] text-slate-500">
+          {p.date} · {p.read}
         </p>
-        <h3 className="mt-3 text-lg font-semibold leading-6 group-hover:text-mint-700">
+        <h3 className="mt-3 text-lg font-semibold leading-6 text-white transition group-hover:text-cyan-300">
           {p.title}
         </h3>
-        <p className="mt-3 text-sm leading-6 text-slate-500">{p.description}</p>
+        <p className="mt-3 text-sm leading-6 text-slate-400">{p.description}</p>
         <Link
           href={"/blog/" + p.slug}
-          className="mt-5 inline-flex items-center gap-2 text-sm font-semibold"
+          className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-mint-300"
         >
           Ler artigo <Icon name="arrow" />
         </Link>
@@ -765,22 +861,20 @@ function PostCard({ p }) {
 }
 function BlogPreview() {
   return (
-    <section className="border-t bg-white">
-      <div className="section">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Conteúdo para clínicas</p>
-            <h2>Conhecimento para uma rotina consistente.</h2>
-          </div>
-          <Link href="/blog" className="font-semibold text-mint-700">
-            Ver todos →
-          </Link>
+    <section className="section">
+      <div className="section-heading" data-reveal>
+        <div>
+          <p className="eyebrow">Conteúdo para clínicas</p>
+          <h2>Conhecimento para uma rotina consistente.</h2>
         </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {posts.slice(0, 3).map((p) => (
-            <PostCard key={p.slug} p={p} />
-          ))}
-        </div>
+        <Link href="/blog" className="btn-ghost">
+          Ver todos <Icon name="arrow" />
+        </Link>
+      </div>
+      <div className="mt-14 grid gap-6 md:grid-cols-3">
+        {posts.slice(0, 3).map((p, k) => (
+          <PostCard key={p.slug} p={p} reveal={String(k + 1)} />
+        ))}
       </div>
     </section>
   );
@@ -795,13 +889,14 @@ function Blog() {
       />
       <Hero
         eyebrow="Blog Dimensia"
+        code="blog"
         title="Tecnologia e boas práticas para a rotina clínica."
         text="Conteúdo direto sobre planejamento, fotografia, privacidade, documentação e experiência do paciente."
       />
       <section className="section">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((p) => (
-            <PostCard key={p.slug} p={p} />
+          {posts.map((p, k) => (
+            <PostCard key={p.slug} p={p} reveal={String((k % 3) + 1)} />
           ))}
         </div>
       </section>
@@ -820,28 +915,31 @@ function Article({ p }) {
         type="article"
       />
       <article>
-        <header className="dark-section">
-          <div className="mx-auto max-w-4xl px-5 py-20 text-white">
-            <Link href="/blog" className="text-mint-300">
+        <header className="relative overflow-hidden border-b border-white/[.05]">
+          <div className="hero-grid absolute inset-0" />
+          <div className="orb orb-a" />
+          <div className="relative mx-auto max-w-4xl px-5 py-20 text-white sm:py-28">
+            <Link href="/blog" className="mono text-xs uppercase tracking-[.18em] text-cyan-300 hover:text-white">
               ← Voltar ao blog
             </Link>
-            <p className="eyebrow mt-9 text-mint-300">{p.category}</p>
-            <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">
-              {p.title}
+            <p className="eyebrow mt-10">{p.category}</p>
+            <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-[-.02em] sm:text-5xl">
+              <span className="text-chrome">
+                <Scramble text={p.title} speed={18} />
+              </span>
             </h1>
-            <p className="mt-6 text-lg leading-8 text-slate-300">
-              {p.description}
-            </p>
-            <p className="mt-7 text-sm text-slate-400">
+            <p className="mt-6 text-lg leading-8 text-slate-400">{p.description}</p>
+            <p className="mono mt-8 text-[11px] uppercase tracking-[.18em] text-slate-500">
               {p.date} · {p.read} de leitura
             </p>
           </div>
         </header>
-        <div className="mx-auto max-w-3xl px-5 py-16">
-          {p.sections.map(([t, d]) => (
-            <section key={t} className="mb-10">
-              <h2 className="text-2xl font-semibold">{t}</h2>
-              <p className="mt-4 text-base leading-8 text-slate-600">{d}</p>
+        <div className="prose-dark mx-auto max-w-3xl px-5 py-20">
+          {p.sections.map(([t, d], k) => (
+            <section key={t} className="mb-12" data-reveal>
+              <p className="mono mb-2 text-[11px] text-cyan-400">/{String(k + 1).padStart(2, "0")}</p>
+              <h2>{t}</h2>
+              <p>{d}</p>
             </section>
           ))}
         </div>
@@ -860,17 +958,19 @@ function About() {
       />
       <Hero
         eyebrow="Sobre a Dimensia"
+        code="sobre"
         title="Tecnologia para tornar o planejamento mais claro."
         text="A Dimensia aproxima visão computacional, organização clínica e comunicação visual da rotina profissional."
       />
       <section className="section grid gap-12 lg:grid-cols-2">
-        <div>
+        <div data-reveal>
           <p className="eyebrow">Nossa visão</p>
           <h2 className="section-title">
-            O profissional decide. A tecnologia amplia a perspectiva.
+            O profissional decide.{" "}
+            <span className="text-gradient">A tecnologia amplia a perspectiva.</span>
           </h2>
         </div>
-        <div className="space-y-5 text-lg leading-8 text-slate-600">
+        <div className="space-y-5 text-lg leading-8 text-slate-400" data-reveal="2">
           <p>
             Inovação útil melhora o processo sem esconder sua complexidade. O
             Dimensia combina automação com revisão humana.
@@ -907,17 +1007,18 @@ function Contact() {
           icon="mail"
           title="Atendimento e suporte"
           text="Escreva para contato@dimensia.com.br com seu nome, clínica e dúvida."
+          reveal="1"
         />
-        <div className="content-card">
+        <div className="content-card spot" data-reveal="2">
           <div className="icon-box">
-            <Icon name="sparkles" />
+            <Icon name="sparkles" className="h-5 w-5" />
           </div>
-          <h2 className="mt-5 text-xl font-semibold">Quer conhecer agora?</h2>
-          <p className="mt-3 text-slate-500">
+          <h2 className="mt-6 text-xl font-semibold">Quer conhecer agora?</h2>
+          <p className="mt-3 text-slate-400">
             Explore o fluxo completo por 14 dias, sem cartão.
           </p>
           <a href={APP + "/cadastro"} className="btn-primary mt-6">
-            Criar conta grátis
+            Criar conta grátis <Icon name="arrow" />
           </a>
         </div>
       </section>
@@ -927,10 +1028,13 @@ function Contact() {
 function NotFound() {
   return (
     <Layout>
-      <section className="section py-28! text-center">
+      <section className="section py-36! text-center">
         <p className="eyebrow">Erro 404</p>
-        <h1 className="mt-4 text-4xl font-semibold">Página não encontrada.</h1>
-        <Link href="/" className="btn-primary mt-8">
+        <h1 className="mt-6 text-7xl font-semibold text-gradient sm:text-9xl">
+          <Scramble text="404" />
+        </h1>
+        <p className="mt-4 text-lg text-slate-400">Página não encontrada.</p>
+        <Link href="/" className="btn-primary mt-10">
           Voltar ao início
         </Link>
       </section>

@@ -1,0 +1,959 @@
+import React, { useEffect, useState } from "react";
+import { Icon, Logo } from "./ui";
+
+const APP = (
+  import.meta.env.VITE_APP_URL || "https://app.dimensia.com.br"
+).replace(/\/$/, "");
+const SITE = "https://dimensia.com.br";
+const posts = [
+  {
+    slug: "planejamento-facial-3d-na-pratica",
+    category: "Planejamento 3D",
+    title: "Planejamento facial 3D na prática: do registro ao acompanhamento",
+    description:
+      "Entenda como fotografias padronizadas se transformam em uma visualização tridimensional útil para organizar o planejamento e melhorar a comunicação.",
+    date: "5 de outubro de 2026",
+    read: "7 min",
+    icon: "cube",
+    sections: [
+      [
+        "O que é o planejamento facial 3D?",
+        "É uma forma visual de organizar a avaliação do rosto e registrar pontos de interesse sobre uma superfície tridimensional. A tecnologia não substitui o exame clínico nem decide o tratamento: ela ajuda o profissional a documentar, revisar e comunicar seu próprio planejamento.",
+      ],
+      [
+        "Por que a padronização importa",
+        "Enquadramento, iluminação, distância e posição da cabeça influenciam a reconstrução. Uma captura guiada reduz variações e cria registros mais consistentes entre consultas.",
+      ],
+      [
+        "Da captura ao modelo",
+        "O sistema identifica referências faciais, estima a geometria e combina os ângulos disponíveis. Depois apresenta uma superfície navegável onde o profissional confere contornos e registra as regiões planejadas.",
+      ],
+      [
+        "Uso responsável",
+        "O modelo é um apoio visual. Medidas, doses, indicação e execução permanecem sob responsabilidade do profissional habilitado. Consentimento e políticas compatíveis com a LGPD são essenciais.",
+      ],
+    ],
+  },
+  {
+    slug: "fotos-clinicas-padronizadas",
+    category: "Boas práticas",
+    title: "Como produzir fotos clínicas mais consistentes",
+    description:
+      "Um guia simples de iluminação, enquadramento e posicionamento para melhorar o histórico visual dos pacientes.",
+    date: "2 de outubro de 2026",
+    read: "5 min",
+    icon: "camera",
+    sections: [
+      [
+        "Crie um padrão repetível",
+        "Defina um local fixo, uma distância aproximada e uma sequência de ângulos. O objetivo é tornar os registros comparáveis entre diferentes momentos.",
+      ],
+      [
+        "Prefira luz uniforme",
+        "Sombras duras escondem contornos e alteram a percepção de volume. Use luz frontal suave, evite contraluz e mantenha a mesma condição sempre que possível.",
+      ],
+      [
+        "Oriente a posição",
+        "Peça expressão neutra, cabelo afastado e cabeça alinhada. Nas vistas laterais, gire a cabeça sem inclinar o queixo.",
+      ],
+      [
+        "Revise antes de salvar",
+        "Confira nitidez, presença de apenas um rosto, enquadramento completo e ausência de objetos cobrindo regiões importantes.",
+      ],
+    ],
+  },
+  {
+    slug: "lgpd-imagens-de-pacientes",
+    category: "Privacidade",
+    title: "LGPD e imagens de pacientes: cuidados essenciais",
+    description:
+      "Consentimento, acesso e armazenamento: pontos fundamentais para tratar registros faciais com responsabilidade.",
+    date: "28 de setembro de 2026",
+    read: "6 min",
+    icon: "shield",
+    sections: [
+      [
+        "Por que essas imagens merecem atenção",
+        "Fotografias clínicas podem identificar uma pessoa e revelar informações relacionadas à saúde. A clínica deve definir finalidade clara, limitar o acesso e adotar medidas proporcionais ao risco.",
+      ],
+      [
+        "Consentimento e transparência",
+        "O paciente precisa saber por que a imagem será utilizada, por quanto tempo ficará armazenada e quem poderá acessá-la.",
+      ],
+      [
+        "Controle de acesso",
+        "Cada profissional deve utilizar seu próprio acesso. Evite senhas compartilhadas e revise permissões quando alguém muda de função ou deixa a equipe.",
+      ],
+      [
+        "Políticas internas",
+        "Treinamento, rotinas de descarte e um canal para solicitações dos titulares completam uma prática responsável. Consulte apoio jurídico para adequar seus documentos.",
+      ],
+    ],
+  },
+  {
+    slug: "relatorio-facial-comunicacao-paciente",
+    category: "Experiência do paciente",
+    title: "Como um relatório visual melhora a comunicação",
+    description:
+      "Organize o planejamento em um documento claro, profissional e fácil de consultar antes e depois do atendimento.",
+    date: "22 de setembro de 2026",
+    read: "4 min",
+    icon: "file",
+    sections: [
+      [
+        "Clareza reduz ruído",
+        "Um relatório reúne regiões, produtos, quantidades e observações em uma estrutura única, evitando informações espalhadas.",
+      ],
+      [
+        "Uma conversa mais visual",
+        "Pontos numerados e vistas do rosto ajudam a explicar o planejamento sem depender apenas de termos técnicos. O documento apoia a conversa, sem prometer resultados.",
+      ],
+      [
+        "Continuidade do atendimento",
+        "No retorno, a equipe recupera o contexto rapidamente. Isso favorece consistência mesmo quando mais de um profissional participa da jornada.",
+      ],
+    ],
+  },
+];
+const features = [
+  [
+    "camera",
+    "Captura guiada",
+    "Orientações de enquadramento, posição e estabilidade para registros mais consistentes.",
+  ],
+  [
+    "cube",
+    "Visualização facial 3D",
+    "Explore volume, relevo e textura a partir de diferentes ângulos.",
+  ],
+  [
+    "target",
+    "Mapeamento de aplicações",
+    "Associe região, produto, quantidade, lote, validade e observações a cada ponto.",
+  ],
+  [
+    "sparkles",
+    "Apoio de IA",
+    "Automatize qualidade e reconstrução mantendo a decisão clínica com o profissional.",
+  ],
+  [
+    "users",
+    "Histórico por paciente",
+    "Centralize fotografias, planejamentos e relatórios em uma linha do tempo.",
+  ],
+  [
+    "file",
+    "Relatórios profissionais",
+    "Gere documentos claros com pontos numerados, totais e vistas selecionadas.",
+  ],
+];
+
+function Link({ href, children, ...p }) {
+  const go = (e) => {
+    if (/^(https?:|mailto:|tel:)/.test(href) || e.metaKey || e.ctrlKey) return;
+    e.preventDefault();
+    history.pushState({}, "", href);
+    dispatchEvent(new PopStateEvent("popstate"));
+    scrollTo(0, 0);
+  };
+  return (
+    <a href={href} onClick={go} {...p}>
+      {children}
+    </a>
+  );
+}
+function Seo({ title, description, path = "/", type = "website" }) {
+  useEffect(() => {
+    const t =
+      title === "Dimensia"
+        ? "Dimensia | Planejamento facial 3D para clínicas"
+        : `${title} | Dimensia`;
+    document.title = t;
+    const m = {
+      description,
+      "og:title": t,
+      "og:description": description,
+      "og:url": SITE + path,
+      "og:type": type,
+      "twitter:title": t,
+      "twitter:description": description,
+    };
+    Object.entries(m).forEach(([k, v]) => {
+      const a = k.startsWith("og:") ? "property" : "name";
+      let x = document.head.querySelector(`meta[${a}="${k}"]`);
+      if (!x) {
+        x = document.createElement("meta");
+        x.setAttribute(a, k);
+        document.head.appendChild(x);
+      }
+      x.content = v;
+    });
+    document.querySelector('link[rel="canonical"]').href = SITE + path;
+  }, [title, description, path, type]);
+  return null;
+}
+function Header() {
+  const [o, setO] = useState(false),
+    nav = [
+      ["/produto", "Produto"],
+      ["/como-funciona", "Como funciona"],
+      ["/seguranca", "Segurança"],
+      ["/planos", "Planos"],
+      ["/blog", "Blog"],
+    ];
+  return (
+    <header className="site-header">
+      <div className="mx-auto flex h-[74px] max-w-7xl items-center justify-between px-5 sm:px-8">
+        <Link href="/">
+          <Logo className="h-9 sm:h-10" />
+        </Link>
+        <nav className="hidden items-center lg:flex">
+          {nav.map(([h, l]) => (
+            <Link key={h} href={h} className="nav-link">
+              {l}
+            </Link>
+          ))}
+        </nav>
+        <div className="hidden items-center gap-2 lg:flex">
+          <a href={APP + "/entrar"} className="nav-link">
+            Entrar
+          </a>
+          <a href={APP + "/cadastro"} className="btn-primary">
+            Teste grátis <Icon name="arrow" />
+          </a>
+        </div>
+        <button
+          className="grid h-11 w-11 place-items-center rounded-xl border border-slate-200 lg:hidden"
+          onClick={() => setO(!o)}
+        >
+          <Icon name={o ? "x" : "menu"} />
+        </button>
+      </div>
+      {o && (
+        <div className="border-t bg-white px-5 pb-5 lg:hidden">
+          <nav className="flex flex-col py-3">
+            {nav.map(([h, l]) => (
+              <Link
+                key={h}
+                href={h}
+                onClick={() => setO(false)}
+                className="rounded-lg px-3 py-3 text-sm font-medium"
+              >
+                {l}
+              </Link>
+            ))}
+          </nav>
+          <div className="grid grid-cols-2 gap-2">
+            <a href={APP + "/entrar"} className="btn-secondary">
+              Entrar
+            </a>
+            <a href={APP + "/cadastro"} className="btn-primary">
+              Teste grátis
+            </a>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
+function Footer() {
+  const group = (t, a) => (
+    <div>
+      <p className="footer-title">{t}</p>
+      <nav className="mt-4 flex flex-col items-start gap-3">
+        {a.map(([h, l]) => (
+          <Link key={h} href={h} className="hover:text-white">
+            {l}
+          </Link>
+        ))}
+      </nav>
+    </div>
+  );
+  return (
+    <footer className="bg-slate-950 px-5 py-14 text-sm text-slate-400 sm:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <Logo variant="light" className="h-9" />
+          <p className="mt-5 max-w-sm leading-6">
+            Planejamento facial inteligente em 3D para clínicas que valorizam
+            organização, clareza e apresentação profissional.
+          </p>
+        </div>
+        {group("Produto", [
+          ["/produto", "Recursos"],
+          ["/como-funciona", "Como funciona"],
+          ["/planos", "Planos"],
+          ["/seguranca", "Segurança"],
+        ])}
+        {group("Dimensia", [
+          ["/blog", "Blog"],
+          ["/sobre", "Sobre nós"],
+          ["/contato", "Contato"],
+        ])}
+        <div>
+          <p className="footer-title">Acesso</p>
+          <div className="mt-4 flex flex-col items-start gap-3">
+            <a href={APP + "/entrar"}>Entrar no sistema</a>
+            <a href={APP + "/cadastro"}>Criar conta grátis</a>
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-3 border-t border-white/10 pt-7 text-xs sm:flex-row sm:justify-between">
+        <span>© {new Date().getFullYear()} Dimensia.</span>
+        <span>Ferramenta de apoio — não substitui avaliação profissional.</span>
+      </div>
+    </footer>
+  );
+}
+function WhatsAppButton() {
+  const message = encodeURIComponent(
+    "Olá! Conheci a Dimensia pelo site e gostaria de saber mais sobre a plataforma.",
+  );
+  return (
+    <a
+      href={`https://wa.me/5511990029866?text=${message}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="whatsapp-button"
+      aria-label="Conversar com a Dimensia pelo WhatsApp"
+    >
+      <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+        <path d="M16.05 3.2A12.7 12.7 0 0 0 5.28 22.63L3.6 28.8l6.3-1.65A12.74 12.74 0 1 0 16.05 3.2Zm0 2.15a10.58 10.58 0 1 1-5.4 19.67l-.38-.23-3.73.98 1-3.63-.25-.4a10.56 10.56 0 0 1 8.76-16.39Zm-4.54 4.7c-.2 0-.52.08-.8.38-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.14.2 2.09 3.34 5.17 4.55 2.55 1 3.08.8 3.64.75.56-.05 1.8-.74 2.06-1.45.25-.72.25-1.33.18-1.46-.08-.12-.28-.2-.59-.35-.3-.15-1.8-.9-2.08-.99-.28-.1-.48-.15-.68.15-.2.3-.79.99-.96 1.2-.18.2-.36.23-.66.08-.3-.15-1.28-.47-2.44-1.5-.9-.8-1.51-1.8-1.69-2.1-.18-.3-.02-.46.13-.61.14-.13.3-.35.46-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.07-.15-.67-1.62-.93-2.22-.24-.58-.5-.5-.68-.51h-.58Z" />
+      </svg>
+    </a>
+  );
+}
+
+const Layout = ({ children }) => (
+  <div className="min-h-screen bg-[#f6f9f8]">
+    <Header />
+    <main>{children}</main>
+    <Footer />
+    <WhatsAppButton />
+  </div>
+);
+function Hero({ eyebrow, title, text, children }) {
+  return (
+    <section className="dark-section relative overflow-hidden">
+      <div className="hero-grid absolute inset-0" />
+      <div className="relative mx-auto max-w-7xl px-5 py-20 text-white sm:px-8 sm:py-24">
+        <p className="eyebrow text-mint-300">{eyebrow}</p>
+        <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl">
+          {title}
+        </h1>
+        <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+          {text}
+        </p>
+        {children}
+      </div>
+    </section>
+  );
+}
+const Cta = () => (
+  <section className="bg-mint-500 px-5 py-16 text-center">
+    <p className="eyebrow text-mint-900">Comece agora</p>
+    <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">
+      Dê uma nova dimensão ao seu planejamento.
+    </h2>
+    <p className="mx-auto mt-4 max-w-xl text-mint-900">
+      Conheça todos os recursos por 14 dias, sem cartão.
+    </p>
+    <a
+      href={APP + "/cadastro"}
+      className="mt-8 inline-flex min-h-12 items-center gap-2 rounded-xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white"
+    >
+      Começar teste grátis <Icon name="arrow" />
+    </a>
+  </section>
+);
+const Card = ({ icon, title, text }) => (
+  <article className="content-card">
+    <div className="icon-box">
+      <Icon name={icon} className="h-5 w-5" />
+    </div>
+    <h3 className="mt-5 font-semibold text-slate-900">{title}</h3>
+    <p className="mt-2 text-sm leading-6 text-slate-500">{text}</p>
+  </article>
+);
+function Face() {
+  return (
+    <div className="hero-face relative mx-auto aspect-[4/5] w-full max-w-md rounded-[2rem] border border-white/10 bg-white/[.035] p-9">
+      <svg viewBox="0 0 140 170" fill="none" className="h-full w-full">
+        <path d="M70 10C20 10 15 47 23 88C28 125 46 153 70 162C94 153 112 125 117 88C125 47 120 10 70 10Z" />
+        <path d="M23 65L70 36L117 65L70 88Z M23 88L70 110L117 88 M40 132L70 110L100 132 M70 10V162 M28 42L45 65L35 100L70 145L105 100L95 65L112 42" />
+      </svg>
+      {[
+        [38, 31],
+        [62, 31],
+        [50, 52],
+        [35, 66],
+        [65, 66],
+        [50, 81],
+      ].map(([x, y], i) => (
+        <span
+          key={i}
+          className="hero-dot absolute grid h-8 w-8 place-items-center rounded-full bg-mint-400 text-xs font-bold text-slate-950 ring-2 ring-white"
+          style={{ left: x + "%", top: y + "%" }}
+        >
+          {i + 1}
+        </span>
+      ))}
+    </div>
+  );
+}
+function Home() {
+  return (
+    <Layout>
+      <Seo
+        title="Dimensia"
+        description="Planejamento facial 3D, captura guiada e relatórios profissionais para clínicas."
+      />
+      <section className="dark-section relative overflow-hidden text-white">
+        <div className="hero-grid absolute inset-0" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
+          <div>
+            <span className="pill-dark">
+              <Icon name="sparkles" /> Tecnologia para harmonização facial
+            </span>
+            <h1 className="mt-7 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
+              Planeje com clareza.
+              <br />
+              <span className="text-mint-400">Apresente com confiança.</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
+              Transforme registros faciais em visualizações 3D, organize pontos
+              de aplicação e entregue relatórios profissionais.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-5">
+              <a href={APP + "/cadastro"} className="btn-primary px-6! py-3.5!">
+                Testar grátis <Icon name="arrow" />
+              </a>
+              <Link
+                href="/como-funciona"
+                className="py-3 text-sm font-semibold"
+              >
+                Ver como funciona →
+              </Link>
+            </div>
+          </div>
+          <Face />
+        </div>
+      </section>
+      <section className="section">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Plataforma completa</p>
+            <h2>Do primeiro registro ao relatório final.</h2>
+          </div>
+          <p>
+            Menos informações espalhadas e mais consistência na rotina da
+            clínica.
+          </p>
+        </div>
+        <div className="card-grid mt-12">
+          {features.map(([i, t, d]) => (
+            <Card key={t} icon={i} title={t} text={d} />
+          ))}
+        </div>
+      </section>
+      <section className="workflow-section overflow-hidden border-y border-mint-100">
+        <div className="section relative z-10 grid items-center gap-14 lg:grid-cols-[.82fr_1.18fr]">
+          <div className="max-w-lg">
+            <p className="eyebrow">Fluxo conectado</p>
+            <h2 className="section-title">
+              Um caminho mais simples para um planejamento completo.
+            </h2>
+            <p className="section-copy">
+              Cada etapa se conecta à próxima. Você mantém o foco no paciente
+              enquanto o Dimensia organiza os detalhes do atendimento.
+            </p>
+            <Link href="/como-funciona" className="btn-secondary mt-7">
+              Ver o passo a passo <Icon name="arrow" />
+            </Link>
+          </div>
+          <ol className="workflow-list">
+            {[
+              ["01", "users", "Cadastre e fotografe", "Organize os dados do paciente e faça a captura guiada pelo celular ou tablet."],
+              ["02", "cube", "Explore e planeje", "Revise a visualização 3D e registre cada ponto com produto, região e quantidade."],
+              ["03", "file", "Documente e acompanhe", "Gere um relatório profissional e mantenha todo o histórico centralizado."],
+            ].map(([n, icon, title, text]) => (
+              <li
+                key={n}
+                className="workflow-card"
+              >
+                <span className="workflow-number">{n}</span>
+                <span className="workflow-icon"><Icon name={icon} className="h-5 w-5" /></span>
+                <span className="min-w-0">
+                  <strong className="block text-base text-slate-900">{title}</strong>
+                  <span className="mt-1.5 block text-sm leading-6 text-slate-500">{text}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+      <BlogPreview />
+      <Cta />
+    </Layout>
+  );
+}
+function Product() {
+  return (
+    <Layout>
+      <Seo
+        title="Produto"
+        path="/produto"
+        description="Recursos da plataforma Dimensia para captura, planejamento 3D e relatórios."
+      />
+      <Hero
+        eyebrow="Produto"
+        title="Uma visão completa do planejamento facial."
+        text="Captura, visualização, mapeamento, documentação e gestão em uma experiência construída para a rotina clínica."
+      />
+      <section className="section">
+        <div className="card-grid">
+          {features.map(([i, t, d]) => (
+            <Card key={t} icon={i} title={t} text={d} />
+          ))}
+        </div>
+        <div className="mt-16 grid gap-6 lg:grid-cols-2">
+          {[
+            [
+              "Captura e qualidade",
+              "A câmera orienta posição, enquadramento e estabilidade. A revisão acontece antes de salvar.",
+            ],
+            [
+              "Reconstrução e visualização",
+              "A superfície 3D oferece volume, relevo e textura para explorar o registro.",
+            ],
+            [
+              "Pontos e produtos",
+              "Cada marcação carrega região, produto, quantidade, lote, validade e observações.",
+            ],
+            [
+              "Relatório e histórico",
+              "O PDF organiza os pontos e tudo permanece associado ao paciente.",
+            ],
+          ].map(([t, d]) => (
+            <div key={t} className="rounded-3xl bg-white p-7">
+              <h2 className="text-xl font-semibold">{t}</h2>
+              <p className="mt-3 leading-7 text-slate-500">{d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+      <Cta />
+    </Layout>
+  );
+}
+function How() {
+  const a = [
+    ["users", "1. Organize o paciente", "Centralize dados e histórico."],
+    [
+      "camera",
+      "2. Faça a captura guiada",
+      "Siga instruções de alinhamento e estabilidade.",
+    ],
+    [
+      "sparkles",
+      "3. Processe as imagens",
+      "A qualidade é avaliada antes da reconstrução.",
+    ],
+    [
+      "cube",
+      "4. Explore o modelo 3D",
+      "Gire, aproxime e alterne a visualização.",
+    ],
+    [
+      "target",
+      "5. Registre o planejamento",
+      "Informe região, produto, quantidade e observações.",
+    ],
+    [
+      "file",
+      "6. Gere o relatório",
+      "Crie um PDF claro para documentação e comunicação.",
+    ],
+  ];
+  return (
+    <Layout>
+      <Seo
+        title="Como funciona"
+        path="/como-funciona"
+        description="Passo a passo do planejamento facial 3D no Dimensia."
+      />
+      <Hero
+        eyebrow="Como funciona"
+        title="Um processo claro, do registro ao relatório."
+        text="O fluxo reduz tarefas manuais e mantém o profissional no controle."
+      />
+      <section className="section">
+        <ol className="grid gap-5 lg:grid-cols-2">
+          {a.map(([i, t, d]) => (
+            <li key={t}>
+              <Card icon={i} title={t} text={d} />
+            </li>
+          ))}
+        </ol>
+        <div className="mt-12 rounded-3xl border border-amber-200 bg-amber-50 p-7">
+          <b>Tecnologia de apoio, decisão profissional</b>
+          <p className="mt-2 text-sm leading-6 text-amber-900/75">
+            O Dimensia não realiza diagnóstico, não prescreve procedimentos e
+            não substitui avaliação presencial ou responsabilidade profissional.
+          </p>
+        </div>
+      </section>
+      <Cta />
+    </Layout>
+  );
+}
+function Security() {
+  return (
+    <Layout>
+      <Seo
+        title="Segurança e LGPD"
+        path="/seguranca"
+        description="Princípios de segurança, privacidade e LGPD no Dimensia."
+      />
+      <Hero
+        eyebrow="Segurança e privacidade"
+        title="Confiança também é parte do planejamento."
+        text="Proteção de dados orienta a forma como acessos, pacientes, imagens e documentos são organizados."
+      />
+      <section className="section">
+        <div className="card-grid">
+          {[
+            [
+              "lock",
+              "Acesso individual",
+              "Credenciais próprias para cada membro.",
+            ],
+            [
+              "home",
+              "Isolamento por clínica",
+              "Dados separados entre organizações.",
+            ],
+            [
+              "shield",
+              "Proteção de dados",
+              "Camadas de proteção no armazenamento e comunicação.",
+            ],
+            [
+              "users",
+              "Permissões de equipe",
+              "Controle sobre quem participa da operação.",
+            ],
+            [
+              "archive",
+              "Histórico centralizado",
+              "Menos cópias espalhadas em dispositivos pessoais.",
+            ],
+            [
+              "check",
+              "Consentimento consciente",
+              "Autorizações adequadas à finalidade de uso.",
+            ],
+          ].map(([i, t, d]) => (
+            <Card key={t} icon={i} title={t} text={d} />
+          ))}
+        </div>
+        <div className="mt-14 grid gap-8 lg:grid-cols-2">
+          <div>
+            <p className="eyebrow">Responsabilidade compartilhada</p>
+            <h2 className="section-title">
+              A rotina da clínica completa o cuidado.
+            </h2>
+          </div>
+          <div className="space-y-5 text-slate-500">
+            <p>
+              <b className="text-slate-900">Finalidade clara.</b> Explique como
+              fotografias e dados serão usados.
+            </p>
+            <p>
+              <b className="text-slate-900">Acessos individuais.</b> Não
+              compartilhe senhas e revise permissões.
+            </p>
+            <p>
+              <b className="text-slate-900">Políticas internas.</b> Treine a
+              equipe e defina retenção e descarte.
+            </p>
+            <p>
+              <b className="text-slate-900">Orientação especializada.</b> Adeque
+              documentos à realidade da clínica.
+            </p>
+          </div>
+        </div>
+      </section>
+      <Cta />
+    </Layout>
+  );
+}
+function Pricing() {
+  return (
+    <Layout>
+      <Seo
+        title="Planos"
+        path="/planos"
+        description="Plano do Dimensia com 14 dias grátis, sem cartão."
+      />
+      <Hero
+        eyebrow="Planos"
+        title="Simples para começar. Completo para crescer."
+        text="Um plano transparente por clínica com os recursos essenciais para organizar o planejamento facial."
+      />
+      <section className="section">
+        <div className="mx-auto max-w-xl rounded-[2rem] border border-mint-300 bg-white p-8 shadow-xl">
+          <span className="pill-light">14 dias grátis</span>
+          <h2 className="mt-5 text-xl font-semibold">Dimensia completo</h2>
+          <div className="mt-3">
+            <b className="text-5xl">R$ 149</b>
+            <span className="text-slate-500"> / mês</span>
+          </div>
+          <p className="mt-2 text-sm text-slate-500">
+            Uma assinatura por clínica. Sem fidelidade.
+          </p>
+          <ul className="mt-7 space-y-3">
+            {[
+              "Pacientes e planejamentos ilimitados",
+              "Captura guiada e visualização 3D",
+              "Equipe com múltiplos profissionais",
+              "Relatórios PDF ilimitados",
+              "Catálogo de produtos",
+              "Histórico e suporte",
+            ].map((x) => (
+              <li key={x} className="flex items-start gap-3 text-sm">
+                <Icon
+                  name="check"
+                  className="mt-0.5 h-5 w-5 shrink-0 text-mint-600"
+                />
+                {x}
+              </li>
+            ))}
+          </ul>
+          <a href={APP + "/cadastro"} className="btn-primary mt-8 w-full py-3!">
+            Começar teste grátis
+          </a>
+        </div>
+      </section>
+      <Cta />
+    </Layout>
+  );
+}
+function PostCard({ p }) {
+  return (
+    <article className="group overflow-hidden rounded-3xl border bg-white">
+      <div className="blog-cover">
+        <Icon name={p.icon} className="h-10 w-10" />
+      </div>
+      <div className="p-6">
+        <p className="eyebrow">
+          {p.category} · {p.read}
+        </p>
+        <h3 className="mt-3 text-lg font-semibold leading-6 group-hover:text-mint-700">
+          {p.title}
+        </h3>
+        <p className="mt-3 text-sm leading-6 text-slate-500">{p.description}</p>
+        <Link
+          href={"/blog/" + p.slug}
+          className="mt-5 inline-flex items-center gap-2 text-sm font-semibold"
+        >
+          Ler artigo <Icon name="arrow" />
+        </Link>
+      </div>
+    </article>
+  );
+}
+function BlogPreview() {
+  return (
+    <section className="border-t bg-white">
+      <div className="section">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Conteúdo para clínicas</p>
+            <h2>Conhecimento para uma rotina consistente.</h2>
+          </div>
+          <Link href="/blog" className="font-semibold text-mint-700">
+            Ver todos →
+          </Link>
+        </div>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {posts.slice(0, 3).map((p) => (
+            <PostCard key={p.slug} p={p} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+function Blog() {
+  return (
+    <Layout>
+      <Seo
+        title="Blog"
+        path="/blog"
+        description="Conteúdos sobre planejamento facial 3D, fotografia clínica e gestão."
+      />
+      <Hero
+        eyebrow="Blog Dimensia"
+        title="Tecnologia e boas práticas para a rotina clínica."
+        text="Conteúdo direto sobre planejamento, fotografia, privacidade, documentação e experiência do paciente."
+      />
+      <section className="section">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((p) => (
+            <PostCard key={p.slug} p={p} />
+          ))}
+        </div>
+      </section>
+      <Cta />
+    </Layout>
+  );
+}
+function Article({ p }) {
+  if (!p) return <NotFound />;
+  return (
+    <Layout>
+      <Seo
+        title={p.title}
+        path={"/blog/" + p.slug}
+        description={p.description}
+        type="article"
+      />
+      <article>
+        <header className="dark-section">
+          <div className="mx-auto max-w-4xl px-5 py-20 text-white">
+            <Link href="/blog" className="text-mint-300">
+              ← Voltar ao blog
+            </Link>
+            <p className="eyebrow mt-9 text-mint-300">{p.category}</p>
+            <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">
+              {p.title}
+            </h1>
+            <p className="mt-6 text-lg leading-8 text-slate-300">
+              {p.description}
+            </p>
+            <p className="mt-7 text-sm text-slate-400">
+              {p.date} · {p.read} de leitura
+            </p>
+          </div>
+        </header>
+        <div className="mx-auto max-w-3xl px-5 py-16">
+          {p.sections.map(([t, d]) => (
+            <section key={t} className="mb-10">
+              <h2 className="text-2xl font-semibold">{t}</h2>
+              <p className="mt-4 text-base leading-8 text-slate-600">{d}</p>
+            </section>
+          ))}
+        </div>
+      </article>
+      <Cta />
+    </Layout>
+  );
+}
+function About() {
+  return (
+    <Layout>
+      <Seo
+        title="Sobre"
+        path="/sobre"
+        description="Conheça a visão e a proposta da Dimensia."
+      />
+      <Hero
+        eyebrow="Sobre a Dimensia"
+        title="Tecnologia para tornar o planejamento mais claro."
+        text="A Dimensia aproxima visão computacional, organização clínica e comunicação visual da rotina profissional."
+      />
+      <section className="section grid gap-12 lg:grid-cols-2">
+        <div>
+          <p className="eyebrow">Nossa visão</p>
+          <h2 className="section-title">
+            O profissional decide. A tecnologia amplia a perspectiva.
+          </h2>
+        </div>
+        <div className="space-y-5 text-lg leading-8 text-slate-600">
+          <p>
+            Inovação útil melhora o processo sem esconder sua complexidade. O
+            Dimensia combina automação com revisão humana.
+          </p>
+          <p>
+            Nosso objetivo é reduzir informações dispersas, facilitar a
+            documentação e criar uma experiência mais visual.
+          </p>
+          <p>
+            Construímos uma plataforma que evolui ouvindo clínicas e
+            aperfeiçoando capturas e reconstruções.
+          </p>
+        </div>
+      </section>
+      <Cta />
+    </Layout>
+  );
+}
+function Contact() {
+  return (
+    <Layout>
+      <Seo
+        title="Contato"
+        path="/contato"
+        description="Fale com a equipe Dimensia."
+      />
+      <Hero
+        eyebrow="Contato"
+        title="Vamos conversar sobre sua clínica?"
+        text="Tire dúvidas, compartilhe sua necessidade ou peça ajuda para começar."
+      />
+      <section className="section grid gap-6 lg:grid-cols-2">
+        <Card
+          icon="mail"
+          title="Atendimento e suporte"
+          text="Escreva para contato@dimensia.com.br com seu nome, clínica e dúvida."
+        />
+        <div className="content-card">
+          <div className="icon-box">
+            <Icon name="sparkles" />
+          </div>
+          <h2 className="mt-5 text-xl font-semibold">Quer conhecer agora?</h2>
+          <p className="mt-3 text-slate-500">
+            Explore o fluxo completo por 14 dias, sem cartão.
+          </p>
+          <a href={APP + "/cadastro"} className="btn-primary mt-6">
+            Criar conta grátis
+          </a>
+        </div>
+      </section>
+    </Layout>
+  );
+}
+function NotFound() {
+  return (
+    <Layout>
+      <section className="section py-28! text-center">
+        <p className="eyebrow">Erro 404</p>
+        <h1 className="mt-4 text-4xl font-semibold">Página não encontrada.</h1>
+        <Link href="/" className="btn-primary mt-8">
+          Voltar ao início
+        </Link>
+      </section>
+    </Layout>
+  );
+}
+function Router() {
+  const [p, setP] = useState(location.pathname.replace(/\/$/, "") || "/");
+  useEffect(() => {
+    const f = () => setP(location.pathname.replace(/\/$/, "") || "/");
+    addEventListener("popstate", f);
+    return () => removeEventListener("popstate", f);
+  }, []);
+  if (p === "/") return <Home />;
+  if (p === "/produto") return <Product />;
+  if (p === "/como-funciona") return <How />;
+  if (p === "/seguranca") return <Security />;
+  if (p === "/planos") return <Pricing />;
+  if (p === "/blog") return <Blog />;
+  if (p.startsWith("/blog/"))
+    return <Article p={posts.find((x) => "/blog/" + x.slug === p)} />;
+  if (p === "/sobre") return <About />;
+  if (p === "/contato") return <Contact />;
+  return <NotFound />;
+}
+export default Router;
