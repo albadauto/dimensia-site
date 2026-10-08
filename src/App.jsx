@@ -319,7 +319,9 @@ function Footer() {
         </div>
       </div>
       <div className="mx-auto mt-14 flex max-w-7xl flex-col gap-3 border-t border-white/[.06] pt-7 text-xs sm:flex-row sm:justify-between">
-        <span className="mono">© {new Date().getFullYear()} Dimensia.</span>
+        <span className="mono">
+          © {new Date().getFullYear()} DIMENSIA VISAO COMPUTACIONAL E IA I.S · CNPJ 69.533.366/0001-22
+        </span>
         <span>Ferramenta de apoio — não substitui avaliação profissional.</span>
       </div>
       <div className="footer-word mt-6" aria-hidden="true">
